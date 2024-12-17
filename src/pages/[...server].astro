@@ -1,0 +1,13 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+import { getLayout } from '~/utils/router';
+import { generate } from '~/utils/generator';
+
+const { server } = Astro.params;
+export const prerender = false;
+---
+
+<Layout {...getLayout(server)}>
+  {generate('src/data/nav', server).map((component) => <component.tag {...component.props} />)}
+</Layout>

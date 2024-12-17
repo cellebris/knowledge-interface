@@ -1,0 +1,24 @@
+---
+import type { VideoPage as Props } from '~/types';
+
+import VideoPlayer from '~/components/widgets/VideoPlayer.astro';
+import Page from '~/components/site/Page.astro';
+
+const { header, videoId = undefined, videoTitle = undefined, components = [], footer } = Astro.props;
+---
+
+<Page header={{ ...header }} components={components} footer={{ ...footer }}>
+  <slot name="title" slot="title" />
+  <slot name="subtitle" slot="subtitle" />
+
+  <Fragment slot="image">
+    {videoId && <VideoPlayer youtubeId={videoId} title={videoTitle} />}
+    {!videoId && <slot name="image" />}
+  </Fragment>
+
+  <slot name="ctaTitle" slot="ctaTitle" />
+  <slot name="ctaSubtitle" slot="ctaSubtitle" />
+
+  <slot name="pre" slot="pre" />
+  <slot name="post" slot="post" />
+</Page>

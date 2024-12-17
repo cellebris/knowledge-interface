@@ -1,0 +1,24 @@
+---
+import type { Page as Props } from '~/types';
+
+import ContentHeader from '~/components/site/ContentHeader.astro';
+import ContentFooter from '~/components/site/ContentFooter.astro';
+import { generate } from '~/utils/generator';
+
+const { header, components = [], footer } = Astro.props;
+---
+
+<ContentHeader {...header}>
+  <slot name="title" slot="title" />
+  <slot name="subtitle" slot="subtitle" />
+  <slot name="image" slot="image" />
+</ContentHeader>
+
+<slot name="pre" />
+{generate('src/data/components', components).map((component) => <component.tag {...component.props} />)}
+<slot name="post" />
+
+<ContentFooter {...footer}>
+  <slot name="ctaTitle" slot="title" />
+  <slot name="ctaSubtitle" slot="subtitle" />
+</ContentFooter>

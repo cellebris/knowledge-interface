@@ -1,0 +1,6 @@
+title: 'Knowledge Center'
+
+classes:
+  container: 'md:py-2 lg:py-2'
+  headline:
+    container: 'py-1 mb-2 md:mb-2'

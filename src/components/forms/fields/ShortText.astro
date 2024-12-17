@@ -1,0 +1,36 @@
+---
+import type { AutocompleteField as Props } from '~/types';
+import { twMerge } from 'tailwind-merge';
+import FormLabel from '~/components/forms/FormLabel.astro';
+import FormError from '~/components/forms/FormError.astro';
+
+const {
+  name,
+  label = undefined,
+  placeholder = '',
+  autocomplete = 'on',
+  required = false,
+  error = undefined,
+  value = undefined,
+} = Astro.props;
+---
+
+<div class="mb-6">
+  <FormLabel name={name} label={label} required={required} />
+  <input
+    type="text"
+    name={name}
+    id={name}
+    autocomplete={autocomplete}
+    placeholder={placeholder}
+    value={value}
+    class={twMerge(
+      'py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900',
+      error
+        ? 'shadow appearance-none border border-red-500 rounded leading-tight focus:outline-none focus:shadow-outline'
+        : ''
+    )}
+    {...required ? { required: 'true' } : {}}
+  />
+  <FormError error={error} />
+</div>

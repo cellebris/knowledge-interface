@@ -1,0 +1,48 @@
+---
+import type { SelectField as Props } from '~/types';
+import { twMerge } from 'tailwind-merge';
+import FormLabel from '~/components/forms/FormLabel.astro';
+import FormError from '~/components/forms/FormError.astro';
+
+const {
+  name,
+  label = undefined,
+  options = [], // Array of options for the checkboxes
+  required = false,
+  error = undefined,
+  value = [], // Pre-selected values as an array
+} = Astro.props;
+---
+
+<div class="mb-6">
+  <FormLabel name={name} label={label} required={required} />
+  <div class="py-2">
+    <hr />
+    <div class="pt-2">
+      {
+        options.map(
+          ({ name: optionName, label: optionLabel = '' }) =>
+            optionName && (
+              <div class="flex items-center p-2">
+                <input
+                  type="checkbox"
+                  id={`${name}-${optionName}`}
+                  name={`${name}[]`}
+                  value={optionName}
+                  class={twMerge(
+                    'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800'
+                  )}
+                  {...(value.includes(optionName) ? { checked: 'true' } : {})}
+                  {...(required ? { required: 'true' } : {})}
+                />
+                <label for={`${name}-${optionName}`} class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                  {optionLabel || optionName}
+                </label>
+              </div>
+            )
+        )
+      }
+    </div>
+  </div>
+  <FormError error={error} />
+</div>

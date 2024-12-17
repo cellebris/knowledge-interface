@@ -1,0 +1,9 @@
+astroType: Content
+
+title: '<b>Thank you</b> for contacting us!'
+subtitle: 'We will get back to you as soon as possible.'
+
+callToAction:
+  variant: secondary
+  text: 'Go to Homepage'
+  href: '/'

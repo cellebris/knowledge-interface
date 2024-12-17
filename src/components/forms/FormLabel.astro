@@ -1,0 +1,13 @@
+---
+import type { FormLabel as Props } from '~/types';
+
+const { name, label = undefined, required = false } = Astro.props;
+---
+
+{
+  label && (
+    <label for={name} class="block text-sm font-medium">
+      {required ? <b>{label}*</b> : label}
+    </label>
+  )
+}

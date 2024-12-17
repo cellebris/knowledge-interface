@@ -1,0 +1,47 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Header from '~/components/widgets/Header.astro';
+import Footer from '~/components/widgets/Footer.astro';
+import Loader from '~/components/ui/Loader.astro';
+import Announcement from '~/components/widgets/Announcement.astro';
+
+import { getHeaderMenu, getActions, getFooterMenu, getAuxMenu, getSocialMenu, getFootNote } from '~/utils/generator';
+
+import type { MetaData } from '~/types';
+
+export interface Props {
+  metadata?: MetaData;
+  announcement?: boolean;
+  header?: boolean;
+  footer?: boolean;
+}
+
+const { metadata, announcement = false, header = true, footer = true } = Astro.props;
+---
+
+<Layout metadata={metadata}>
+  <div class="page-wrapper">
+    <Loader />
+    <slot name="announcement">
+      {announcement && <Announcement />}
+    </slot>
+    <slot name="header">
+      {header && <Header links={getHeaderMenu()} actions={getActions()} isSticky showToggleTheme />}
+    </slot>
+    <main>
+      <slot />
+    </main>
+    <slot name="footer">
+      {
+        footer && (
+          <Footer
+            links={getFooterMenu()}
+            secondaryLinks={getAuxMenu()}
+            socialLinks={getSocialMenu()}
+            footNote={getFootNote()}
+          />
+        )
+      }
+    </slot>
+  </div>
+</Layout>

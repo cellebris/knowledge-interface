@@ -1,0 +1,44 @@
+site:
+  name: Knowledge Center
+  site: 'https://example.com'
+  base: '/'
+  trailingSlash: false
+
+  googleSiteVerificationId: 'xxxxxxx'
+
+# Default SEO metadata
+metadata:
+  title:
+    default: Knowledge Center
+    template: '%s — Knowledge Center'
+  description: 'AI Powered Knowledge Center - Starter Template'
+  robots:
+    index: true
+    follow: true
+  openGraph:
+    site_name: Knowledge Center
+    images:
+      - url: '~/assets/images/default.png'
+        width: 1200
+        height: 628
+    type: website
+  twitter:
+    handle: '@example'
+    site: '@example'
+    cardType: summary_large_image
+
+i18n:
+  language: en
+  textDirection: ltr
+
+analytics:
+  vendors:
+    googleAnalytics:
+      id: 'xxxxxxx'
+    googleTagManager:
+      id: 'xxxxxxx'
+    facebook:
+      id: 'xxxxxxx'
+
+ui:
+  theme: 'system' # Values: "system" | "light" | "dark" | "light:only" | "dark:only"

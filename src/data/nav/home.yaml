@@ -1,0 +1,11 @@
+metadata:
+  title: ''
+
+header:
+  banner: home
+
+components:
+  - search
+
+footer:
+  contact: default

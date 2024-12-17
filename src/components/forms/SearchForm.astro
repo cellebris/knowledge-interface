@@ -1,0 +1,60 @@
+---
+import type { SearchDisplay as Props } from '~/types';
+
+import { Icon } from 'astro-icon/components';
+import Button from '~/components/ui/Button.astro';
+import { getObject } from '~/utils/loader';
+
+const { url } = Astro;
+const formValues = getObject('user-search_values');
+const query = formValues['user-query'];
+
+const { display = true } = Astro.props;
+---
+
+<script is:inline>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function toggleSearch() {
+    const content = document.getElementById('user-search-wrapper');
+    if (content.style.display === 'none') {
+      content.style.display = 'block';
+    } else {
+      content.style.display = 'none';
+    }
+  }
+</script>
+
+<div
+  id="user-search-wrapper"
+  style={display ? '' : 'display: none;'}
+  class="flex flex-col mx-auto rounded-lg backdrop-blur border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 shadow p-4 sm:p-6 lg:p-8 w-full"
+>
+  <form method="POST" action="search" id="user-search" name="user-search" onsubmit="showLoadWrapper()">
+    <input type="hidden" name="form-name" value="user-search" />
+    <input type="hidden" name="origin-path" value={url.pathname} />
+
+    <p class="hidden">
+      <label>
+        Don’t fill this out if you’re human: <input name="bot-field" />
+      </label>
+    </p>
+    <div class="flex">
+      <div class="w-full py-3 px-4">
+        <input
+          type="text"
+          name="user-query"
+          id="user-query"
+          autocomplete="on"
+          placeholder="Got a question?  Type it here."
+          class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900"
+          value={query && url.pathname == '/search' ? query : ''}
+        />
+      </div>
+      <div class="w-15 py-3 px-4">
+        <Button variant="secondary" type="submit" value="primary">
+          <Icon name="tabler:search" class="w-5 h-4 inline-block align-text-bottom" />
+        </Button>
+      </div>
+    </div>
+  </form>
+</div>

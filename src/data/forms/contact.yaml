@@ -1,0 +1,25 @@
+title: 'Drop us a message'
+
+disclaimer: 'By submitting this contact form, you acknowledge and agree to the collection of your personal information.'
+note: 'Our team typically responds within 24 business hours.'
+
+buttonText: Send
+redirect: contact_success
+
+fields:
+  - type: ShortText
+    name: name
+    label: 'Name'
+    required: true
+    validator: validateName
+
+  - type: Email
+    name: email
+    label: 'Email'
+    required: true
+
+  - type: LongText
+    name: message
+    label: 'Message'
+    required: true
+    validator: validateMessage

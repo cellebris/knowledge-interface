@@ -1,0 +1,8 @@
+---
+import { Image } from 'astro:assets';
+import logoLightImage from '~/assets/images/logo-light.svg';
+import logoDarkImage from '~/assets/images/logo-dark.svg';
+---
+
+<Image src={logoLightImage} alt="Cellebris Logo" width={350} class="max-h-12 block dark:hidden" loading="eager" />
+<Image src={logoDarkImage} alt="Cellebris Logo" width={350} class="max-h-12 hidden dark:block" loading="eager" />

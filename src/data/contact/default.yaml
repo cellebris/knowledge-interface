@@ -1,0 +1,13 @@
+title: 'Reach out to us'
+subtitle: "Have questions? Feel free to contact us using the form below. We're here to help!"
+callToAction:
+  text: 'Contact us'
+  href: '/contact'
+items:
+  - title: 'Email us'
+    description: 'hello@example.com'
+    icon: 'tabler:mail'
+
+  - title: 'Follow us'
+    description: '<a href="https://x.com/example">@example</a>'
+    icon: 'tabler:brand-x'

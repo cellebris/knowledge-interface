@@ -1,0 +1,13 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { Note as Props } from '~/types';
+
+const { subject, statement, icon = 'tabler:info-square' } = Astro.props;
+---
+
+<section class="bg-blue-50 dark:bg-slate-800 not-prose">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 text-md text-center font-medium">
+    <span class="font-bold"> <Icon name={icon} class="w-5 h-4 inline-block align-text-bottom" /> {subject}:</span>
+    {statement}
+  </div>
+</section>

@@ -1,0 +1,19 @@
+---
+import type { Page as Props } from '~/types';
+
+import Page from '~/components/site/Page.astro';
+
+const { header, components = [], footer } = Astro.props;
+---
+
+<Page header={{ ...header }} components={components} footer={{ ...footer }}>
+  <slot name="title" slot="title" />
+  <slot name="subtitle" slot="subtitle" />
+  <slot name="image" slot="image" />
+  <slot name="ctaTitle" slot="ctaTitle" />
+  <slot name="ctaSubtitle" slot="ctaSubtitle" />
+
+  <slot name="pre" slot="pre" />
+  <slot />
+  <slot name="post" slot="post" />
+</Page>

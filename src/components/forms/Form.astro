@@ -1,0 +1,102 @@
+---
+import type { Form as Props } from '~/types';
+import { getVar, getObject } from '~/utils/loader';
+import { getFormField } from '~/utils/generator';
+import Headline from '~/components/ui/Headline.astro';
+import Button from '~/components/ui/Button.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+const { url } = Astro;
+const {
+  name,
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  tagline = await Astro.slots.render('tagline'),
+  note = undefined,
+  fields = [],
+  disclaimer = undefined,
+  buttonText = undefined,
+
+  id,
+  isDark = false,
+  classes = {},
+  bg = await Astro.slots.render('bg'),
+} = Astro.props;
+
+const error = getVar(`${name}_error`);
+const errors = getObject(`${name}_errors`);
+const values = getObject(`${name}_values`);
+---
+
+<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-7xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
+  <Headline title={title} subtitle={subtitle} tagline={tagline} />
+
+  <div
+    class="flex flex-col max-w-xl mx-auto rounded-lg backdrop-blur border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 shadow p-4 sm:p-6 lg:p-8 w-full"
+  >
+    {
+      error && (
+        <div class="mb-6 p-10 w-full text-center border-2 border-rose-500">
+          <span class="text-red-500 text-l">{(error as Error).message}</span>
+        </div>
+      )
+    }
+    <form method="POST" id={name} name={name} netlify-honeypot="bot-field" data-netlify="true">
+      <input type="hidden" name="form-name" value={name} />
+      <input type="hidden" name="origin-path" value={url.pathname} />
+
+      <p class="hidden">
+        <label>
+          Don’t fill this out if you’re human: <input name="bot-field" />
+        </label>
+      </p>
+      {
+        fields.map((item) => {
+          const component = getFormField(name, item);
+
+          // Handle undefined or null components
+          if (!component.tag) {
+            console.error(`Error: Component for field type "${item.type}" is not defined.`);
+            return <p class="text-red-500">Error: Unsupported field type: {item.type}</p>;
+          }
+
+          return <component.tag error={errors[item.name]} value={values[item.name]} {...component.props} />;
+        })
+      }
+      {
+        disclaimer && (
+          <div class="mt-3 flex items-start">
+            <div class="flex mt-0.5">
+              <input
+                id="disclaimer"
+                name="disclaimer"
+                type="checkbox"
+                class="cursor-pointer block w-full mt-1 py-3 px-4 text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900"
+                required
+              />
+            </div>
+            <div class="ml-3">
+              <label for="disclaimer" class="cursor-pointer select-none text-sm text-gray-600 dark:text-gray-400">
+                {disclaimer}*
+              </label>
+            </div>
+          </div>
+        )
+      }
+
+      <div class="mt-10 grid">
+        <Button variant="primary" type="submit" value="primary">
+          {buttonText ? buttonText : 'Submit'}
+        </Button>
+      </div>
+
+      {
+        note && (
+          <div class="mt-3 text-center">
+            <p class="text-sm text-gray-600 dark:text-gray-400">{note}</p>
+          </div>
+        )
+      }
+    </form>
+  </div>
+</WidgetWrapper>

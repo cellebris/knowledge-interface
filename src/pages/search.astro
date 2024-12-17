@@ -1,0 +1,37 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import ContentHeader from '~/components/site/ContentHeader.astro';
+import ContentFooter from '~/components/site/ContentFooter.astro';
+
+import { getObject } from '~/utils/loader';
+import { generate } from '~/utils/generator';
+import { selectBanner, selectNote, selectStats, selectFAQ, selectComponents } from '~/utils/search';
+import { sendData } from '~/utils/nexical';
+
+export const prerender = false;
+
+const title = 'Search';
+const formValues = getObject('user-search_values');
+let query = formValues['user-query'];
+
+if (query && query.startsWith('/')) {
+  query = query.split(':').slice(1).join(':').trim();
+}
+const queryInfo = query
+  ? await sendData('embedding', {
+      text: query,
+    })
+  : null;
+
+const banner = await selectBanner(queryInfo);
+const note = await selectNote(queryInfo);
+const stats = await selectStats(queryInfo);
+const faq = await selectFAQ(queryInfo);
+const components = await selectComponents(queryInfo, 10);
+---
+
+<Layout metadata={{ title }}>
+  <ContentHeader banner={banner} note={note} stats={stats} />
+  {generate('src/data/components', components).map((component) => <component.tag {...component.props} />)}
+  <ContentFooter faq={faq} note={note} contact="default" />
+</Layout>

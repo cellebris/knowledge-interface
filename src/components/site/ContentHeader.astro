@@ -1,0 +1,36 @@
+---
+import type { ContentHeader as Props } from '~/types';
+import { generate } from '~/utils/generator';
+
+const {
+  type,
+  title = undefined,
+  subtitle = undefined,
+  tagline = undefined,
+  note = undefined,
+  banner = undefined,
+  stats = undefined,
+} = Astro.props;
+---
+
+{
+  generate('src/data/headers', type).map((component) => (
+    <component.tag title={title} subtitle={subtitle} tagline={tagline} {...component.props}>
+      <slot name="title" slot="title" />
+      <slot name="subtitle" slot="subtitle" />
+      <slot name="image" slot="image" />
+    </component.tag>
+  ))
+}
+
+{
+  generate('src/data/banners', banner).map((component) => (
+    <component.tag {...component.props}>
+      <Fragment slot="bg">
+        <div class="absolute inset-0 bg-blue-50 dark:bg-transparent" />
+      </Fragment>
+    </component.tag>
+  ))
+}
+{generate('src/data/stats', stats).map((component) => <component.tag {...component.props} />)}
+{generate('src/data/notes', note).map((component) => <component.tag {...component.props} />)}

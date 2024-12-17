@@ -1,0 +1,35 @@
+---
+import type { ContentFooter as Props } from '~/types';
+
+import { generate } from '~/utils/generator';
+
+const {
+  type = undefined,
+  title = undefined,
+  subtitle = undefined,
+  note = undefined,
+  faq = undefined,
+  faqTitle = 'Frequently Asked Questions',
+  contact = undefined,
+} = Astro.props;
+---
+
+{
+  generate('src/data/faq', faq).map((component) => (
+    <component.tag title={faqTitle} {...component.props}>
+      <Fragment slot="bg">
+        <div class="absolute inset-0 bg-blue-50 dark:bg-transparent" />
+      </Fragment>
+    </component.tag>
+  ))
+}
+{
+  generate('src/data/cta', type).map((component) => (
+    <component.tag title={title} subtitle={subtitle} {...component.props}>
+      <slot name="title" slot="title" />
+      <slot name="subtitle" slot="subtitle" />
+    </component.tag>
+  ))
+}
+{generate('src/data/contact', contact).map((component) => <component.tag {...component.props} />)}
+{generate('src/data/notes', note).map((component) => <component.tag {...component.props} />)}

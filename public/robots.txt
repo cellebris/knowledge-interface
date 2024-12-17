@@ -1,0 +1,3 @@
+# Allow all user agents full access
+User-agent: *
+Allow: /

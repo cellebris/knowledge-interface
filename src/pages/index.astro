@@ -1,0 +1,13 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+import { getLayout } from '~/utils/router';
+import { generate } from '~/utils/generator';
+
+export const page = 'home';
+export const prerender = true;
+---
+
+<Layout {...getLayout(page)}>
+  {generate('src/data/nav', page).map((component) => <component.tag {...component.props} />)}
+</Layout>
