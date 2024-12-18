@@ -6,7 +6,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
 import mdx from '@astrojs/mdx';
-import netlify from '@astrojs/netlify';
+import node from '@astrojs/node';
 
 import icon from 'astro-icon';
 import compress from 'astro-compress';
@@ -70,5 +70,7 @@ export default defineConfig({
     },
   },
 
-  adapter: netlify(),
+  adapter: node({
+    mode: 'standalone',
+  }),
 });

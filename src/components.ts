@@ -64,7 +64,7 @@ export const supportedTypes = {
 };
 
 export const supportedComponents = {
-  'src/data/nav': [
+  'data/nav': [
     'Landing',
     'IndustryDetail',
     'ServiceDetail',
@@ -74,11 +74,11 @@ export const supportedComponents = {
     'Detail',
     'Page',
   ],
-  'src/data/notes': ['Note'],
-  'src/data/headers': ['Hero', 'Hero2', 'HeroText'],
-  'src/data/banners': ['Features2', 'Features', 'Features3', 'Content', 'CallToAction'],
-  'src/data/stats': ['Stats'],
-  'src/data/components': [
+  'data/notes': ['Note'],
+  'data/headers': ['Hero', 'Hero2', 'HeroText'],
+  'data/banners': ['Features2', 'Features', 'Features3', 'Content', 'CallToAction'],
+  'data/stats': ['Stats'],
+  'data/components': [
     'Content',
     'Features',
     'Features2',
@@ -93,10 +93,10 @@ export const supportedComponents = {
     'FAQs',
     'SearchForm',
   ],
-  'src/data/forms': ['Form'],
-  'src/data/faq': ['FAQs'],
-  'src/data/cta': ['CallToAction'],
-  'src/data/contact': ['Steps2', 'Steps', 'Content', 'Features', 'Features2', 'Features3', 'CallToAction'],
+  'data/forms': ['Form'],
+  'data/faq': ['FAQs'],
+  'data/cta': ['CallToAction'],
+  'data/contact': ['Steps2', 'Steps', 'Content', 'Features', 'Features2', 'Features3', 'CallToAction'],
 };
 
 export const formFields = {

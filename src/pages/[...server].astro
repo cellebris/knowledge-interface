@@ -9,5 +9,5 @@ export const prerender = false;
 ---
 
 <Layout {...getLayout(server)}>
-  {generate('src/data/nav', server).map((component) => <component.tag {...component.props} />)}
+  {generate('data/nav', server).map((component) => <component.tag {...component.props} />)}
 </Layout>

@@ -3,7 +3,7 @@ import type { RouterConfig as Card } from '~/types';
 import { getObject } from '~/utils/loader';
 
 export function routes(): Array<Card> {
-  const nav = getObject('src/data/nav');
+  const nav = getObject('data/nav');
   const paths: Array<Card> = [];
 
   for (const path in nav) {
@@ -20,7 +20,7 @@ export function getLayout(name: string | undefined): Record<string, unknown> {
   const props: Record<string, unknown> = {};
 
   if (name) {
-    const loadCache = getObject('src/data/nav');
+    const loadCache = getObject('data/nav');
 
     if (Object.hasOwn(loadCache, name) && loadCache[name].metadata) {
       const metadata = loadCache[name].metadata;

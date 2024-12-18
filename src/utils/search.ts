@@ -142,27 +142,27 @@ async function select(queryInfo: object | null, type: string, limit: number = 1)
 }
 
 export async function selectBanner(queryInfo: object | null): Promise<string | undefined> {
-  const components = await select(queryInfo, 'src/data/banners');
+  const components = await select(queryInfo, 'data/banners');
   return components.length > 0 ? components[0]['name'] : undefined;
 }
 
 export async function selectNote(queryInfo: object | null): Promise<string | undefined> {
-  const components = await select(queryInfo, 'src/data/notes');
+  const components = await select(queryInfo, 'data/notes');
   return components.length > 0 ? components[0]['name'] : undefined;
 }
 
 export async function selectStats(queryInfo: object | null): Promise<string | undefined> {
-  const components = await select(queryInfo, 'src/data/stats');
+  const components = await select(queryInfo, 'data/stats');
   return components.length > 0 ? components[0]['name'] : undefined;
 }
 
 export async function selectFAQ(queryInfo: object | null): Promise<string | undefined> {
-  const components = await select(queryInfo, 'src/data/faq');
+  const components = await select(queryInfo, 'data/faq');
   return components.length > 0 ? components[0]['name'] : undefined;
 }
 
 export async function selectComponents(queryInfo: object | null, count: number = 5): Promise<Array<string>> {
-  const components = await select(queryInfo, 'src/data/components', count);
+  const components = await select(queryInfo, 'data/components', count);
   const statementIndex: Record<string, boolean> = {};
   const names: Array<string> = [];
 

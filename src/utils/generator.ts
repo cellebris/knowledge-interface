@@ -6,27 +6,27 @@ import { getVar, getObject, checkForms } from '~/utils/loader';
 import { routes } from '~/utils/router';
 
 export function getHeaderMenu(): Array<MenuLink> {
-  const loadCache = getObject('src/data/menus');
+  const loadCache = getObject('data/menus');
   return loadCache['header'];
 }
 
 export function getActions(): Array<CallToAction> {
-  const loadCache = getObject('src/data/menus');
+  const loadCache = getObject('data/menus');
   return loadCache['actions'];
 }
 
 export function getFooterMenu(): Array<Links> {
-  const loadCache = getObject('src/data/menus');
+  const loadCache = getObject('data/menus');
   return loadCache['footer'];
 }
 
 export function getAuxMenu(): Array<Link> {
-  const loadCache = getObject('src/data/menus');
+  const loadCache = getObject('data/menus');
   return loadCache['auxillary'];
 }
 
 export function getSocialMenu(): Array<Link> {
-  const loadCache = getObject('src/data/menus');
+  const loadCache = getObject('data/menus');
   return loadCache['social'];
 }
 
@@ -36,12 +36,12 @@ export function getFootNote(): string {
 
 export function generate(name: string, order: undefined | string | Array<string>): Array<Component> {
   const loadCache = getObject(name);
-  const formCache = getObject('src/data/forms');
+  const formCache = getObject('data/forms');
   const allowedTypes: Array<string> = supportedComponents[name];
 
   const components: Array<Component> = [];
 
-  if (name == 'src/data/nav') {
+  if (name == 'data/nav') {
     console.log(`Rendering page: ${order}`);
   } else {
     console.log(`Generating ${name}: ${order}`);
@@ -121,23 +121,23 @@ function parseComponents(type: string, names: Array<string>): Array<Record<strin
 }
 
 export function generateData(path: string): Record<string, unknown> {
-  const component: Record<string, unknown> = parseComponent('src/data/nav', path);
+  const component: Record<string, unknown> = parseComponent('data/nav', path);
 
   if (component['header']) {
-    component['header']['type'] = parseComponent('src/data/headers', component['header']['type']);
-    component['header']['note'] = parseComponent('src/data/notes', component['header']['note']);
-    component['header']['banner'] = parseComponent('src/data/banners', component['header']['banner']);
-    component['header']['stats'] = parseComponent('src/data/stats', component['header']['stats']);
+    component['header']['type'] = parseComponent('data/headers', component['header']['type']);
+    component['header']['note'] = parseComponent('data/notes', component['header']['note']);
+    component['header']['banner'] = parseComponent('data/banners', component['header']['banner']);
+    component['header']['stats'] = parseComponent('data/stats', component['header']['stats']);
   }
   if (component['components']) {
     const components: Array<string> = Object.values(component['components']);
-    component['components'] = parseComponents('src/data/components', components);
+    component['components'] = parseComponents('data/components', components);
   }
   if (component['footer']) {
-    component['footer']['type'] = parseComponent('src/data/cta', component['footer']['type']);
-    component['footer']['note'] = parseComponent('src/data/notes', component['footer']['note']);
-    component['footer']['faq'] = parseComponent('src/data/faq', component['footer']['faq']);
-    component['footer']['contact'] = parseComponent('src/data/contact', component['footer']['contact']);
+    component['footer']['type'] = parseComponent('data/cta', component['footer']['type']);
+    component['footer']['note'] = parseComponent('data/notes', component['footer']['note']);
+    component['footer']['faq'] = parseComponent('data/faq', component['footer']['faq']);
+    component['footer']['contact'] = parseComponent('data/contact', component['footer']['contact']);
   }
   return component;
 }

@@ -14,7 +14,7 @@ const {
 ---
 
 {
-  generate('src/data/headers', type).map((component) => (
+  generate('data/headers', type).map((component) => (
     <component.tag title={title} subtitle={subtitle} tagline={tagline} {...component.props}>
       <slot name="title" slot="title" />
       <slot name="subtitle" slot="subtitle" />
@@ -24,7 +24,7 @@ const {
 }
 
 {
-  generate('src/data/banners', banner).map((component) => (
+  generate('data/banners', banner).map((component) => (
     <component.tag {...component.props}>
       <Fragment slot="bg">
         <div class="absolute inset-0 bg-blue-50 dark:bg-transparent" />
@@ -32,5 +32,5 @@ const {
     </component.tag>
   ))
 }
-{generate('src/data/stats', stats).map((component) => <component.tag {...component.props} />)}
-{generate('src/data/notes', note).map((component) => <component.tag {...component.props} />)}
+{generate('data/stats', stats).map((component) => <component.tag {...component.props} />)}
+{generate('data/notes', note).map((component) => <component.tag {...component.props} />)}

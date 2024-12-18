@@ -10,17 +10,17 @@ import { formProcessor } from '~/utils/forms';
 async function loadComponents(_context: APIContext, next: MiddlewareNext) {
   loadFootNote();
   for (const type of [
-    'src/data/menus',
-    'src/data/forms',
-    'src/data/nav',
-    'src/data/notes',
-    'src/data/headers',
-    'src/data/banners',
-    'src/data/stats',
-    'src/data/components',
-    'src/data/faq',
-    'src/data/contact',
-    'src/data/cta',
+    'data/menus',
+    'data/forms',
+    'data/nav',
+    'data/notes',
+    'data/headers',
+    'data/banners',
+    'data/stats',
+    'data/components',
+    'data/faq',
+    'data/contact',
+    'data/cta',
   ]) {
     await load(type);
   }

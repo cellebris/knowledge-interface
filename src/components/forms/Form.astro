@@ -41,7 +41,7 @@ const values = getObject(`${name}_values`);
         </div>
       )
     }
-    <form method="POST" id={name} name={name} netlify-honeypot="bot-field" data-netlify="true">
+    <form method="POST" id={name} name={name}>
       <input type="hidden" name="form-name" value={name} />
       <input type="hidden" name="origin-path" value={url.pathname} />
 

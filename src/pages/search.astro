@@ -32,6 +32,6 @@ const components = await selectComponents(queryInfo, 10);
 
 <Layout metadata={{ title }}>
   <ContentHeader banner={banner} note={note} stats={stats} />
-  {generate('src/data/components', components).map((component) => <component.tag {...component.props} />)}
+  {generate('data/components', components).map((component) => <component.tag {...component.props} />)}
   <ContentFooter faq={faq} note={note} contact="default" />
 </Layout>

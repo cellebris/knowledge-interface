@@ -15,7 +15,7 @@ const { header, components = [], footer } = Astro.props;
 </ContentHeader>
 
 <slot name="pre" />
-{generate('src/data/components', components).map((component) => <component.tag {...component.props} />)}
+{generate('data/components', components).map((component) => <component.tag {...component.props} />)}
 <slot name="post" />
 
 <ContentFooter {...footer}>

@@ -17,7 +17,7 @@ export function getSrcDir(): string {
 }
 
 export function getDataDir(): string {
-  const dataDir = getSrcDir() + 'data' + path.sep;
+  const dataDir = getRootDir() + 'data' + path.sep;
   return dataDir;
 }
 
@@ -141,7 +141,7 @@ function checkFormData(data: object) {
 
 export function checkForms(page: string): boolean {
   try {
-    return checkFormData(getObject('src/data/nav')[page]);
+    return checkFormData(getObject('data/nav')[page]);
   } catch (error) {
     // Do nothing
     console.log(error.message);
