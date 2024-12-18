@@ -83,4 +83,4 @@ jobs:
           file: ./docker/production/node/Dockerfile
           context: .
           push: true
-          tags: zimagi/knowledge-interface:${{ github.event.release.tag_name }}
+          tags: zimagi/knowledge-interface:${{  github.ref_name }}
