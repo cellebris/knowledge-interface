@@ -1,13 +1,12 @@
 services:
-  node:
+  ui:
     build:
       context: .
-      dockerfile: ./docker/local/node/Dockerfile
+      dockerfile: ./docker/production/node/Dockerfile
     image: 'interface_node'
     container_name: 'interface_node'
-    volumes:
-      - '.:/app:z'
     env_file:
-      - ./.env
+      - ./env/public
+      - ./env/secret
     ports:
-      - '4321:4321'
+      - '8080:8080'

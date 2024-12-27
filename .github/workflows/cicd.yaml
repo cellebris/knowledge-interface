@@ -41,8 +41,44 @@ jobs:
       - run: npm ci
       - run: npm run check
 
+  test_local:
+    runs-on: ubuntu-latest
+    env:
+      COMPOSE_FILE: compose.local.yaml
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Create .secret environment file
+        run: mv env/secret.example env/secret
+
+      - name: Build the Stack
+        run: docker compose build
+
+      - name: Tear down the Stack
+        run: docker compose down
+
+  test_production:
+    runs-on: ubuntu-latest
+    env:
+      COMPOSE_FILE: compose.prod.yaml
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Create .secret environment file
+        run: mv env/secret.example env/secret
+
+      - name: Build the Stack
+        run: docker compose build
+
+      - name: Tear down the Stack
+        run: docker compose down
+
   docker_latest:
-    needs: [build, check]
+    needs: [build, check, test_local, test_production]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
@@ -64,7 +100,7 @@ jobs:
           tags: zimagi/knowledge-interface:latest
 
   docker_tag:
-    needs: [build, check]
+    needs: [build, check, test_local, test_production]
     if: contains(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:

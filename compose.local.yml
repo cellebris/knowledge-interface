@@ -1,0 +1,14 @@
+services:
+  ui:
+    build:
+      context: .
+      dockerfile: ./docker/local/node/Dockerfile
+    image: 'interface_node'
+    container_name: 'interface_node'
+    volumes:
+      - '.:/app:z'
+    env_file:
+      - ./env/public
+      - ./env/secret
+    ports:
+      - '4321:4321'

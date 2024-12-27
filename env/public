@@ -1,0 +1,25 @@
+#
+# General configuration
+#
+NODE_ENV="development"
+
+#
+# Session configuration
+#
+SESSION_COOKIE_NAME="cellebris.session"
+
+#
+# Nexical service configuration
+#
+NEXICAL_PROTOCOL="http"
+NEXICAL_HOSTNAME="localhost"
+NEXICAL_PORT="8080"
+
+#
+# Qdrant search configuration
+#
+QDRANT_HTTPS="false"
+QDRANT_HOSTNAME="localhost"
+QDRANT_PORT="32842"
+QDRANT_COLLECTION="web_component"
+QDRANT_MIN_SCORE="0.3"
