@@ -7,13 +7,13 @@ export async function fetchData(path: string, params = null): Promise<object | n
 
     const queryParams = params ? '/?' + querystring.stringify(params) : '/';
     const options = {
-      protocol: import.meta.env.NEXICAL_PROTOCOL + ':',
-      hostname: import.meta.env.NEXICAL_HOSTNAME,
-      port: import.meta.env.NEXICAL_PORT,
+      protocol: import.meta.env.KNOWLEDGE_ADMIN_PROTOCOL + ':',
+      hostname: import.meta.env.KNOWLEDGE_ADMIN_HOSTNAME,
+      port: import.meta.env.KNOWLEDGE_ADMIN_PORT,
       path: '/' + path.replace(/^\//, '').replace(/\/$/, '') + queryParams,
       method: 'GET',
       headers: {
-        Authorization: `Token ${import.meta.env.NEXICAL_API_KEY}`,
+        Authorization: `Token ${import.meta.env.KNOWLEDGE_ADMIN_API_KEY}`,
         'Content-Type': 'application/json',
       },
     };
@@ -60,13 +60,13 @@ export async function sendData(path: string, values: object, method: string = 'P
     let parsedData = null;
     const postValues = JSON.stringify(values);
     const options = {
-      protocol: import.meta.env.NEXICAL_PROTOCOL + ':',
-      hostname: import.meta.env.NEXICAL_HOSTNAME,
-      port: import.meta.env.NEXICAL_PORT,
+      protocol: import.meta.env.KNOWLEDGE_ADMIN_PROTOCOL + ':',
+      hostname: import.meta.env.KNOWLEDGE_ADMIN_HOSTNAME,
+      port: import.meta.env.KNOWLEDGE_ADMIN_PORT,
       path: '/' + path.replace(/^\//, '').replace(/\/$/, '') + '/',
       method: method,
       headers: {
-        Authorization: `Token ${import.meta.env.NEXICAL_API_KEY}`,
+        Authorization: `Token ${import.meta.env.KNOWLEDGE_ADMIN_API_KEY}`,
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(postValues),
       },
