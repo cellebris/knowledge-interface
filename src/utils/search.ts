@@ -47,19 +47,23 @@ async function search({ embeddings, filterField, filterValues, limit = 10 }): Pr
       score_threshold: parseFloat(import.meta.env.QDRANT_MIN_SCORE),
     });
   }
-  const batches = await client.searchBatch(import.meta.env.QDRANT_COLLECTION, {
-    searches: searchQueries,
-    timeout: 14400,
-  });
-  batches.map((batch) => {
-    batch.map((result) => {
-      if (!(result['id'] in index)) {
-        results.push(result);
-        index[result['id']] = true;
-      }
+  try {
+    const batches = await client.searchBatch(import.meta.env.QDRANT_COLLECTION, {
+      searches: searchQueries,
+      timeout: 14400,
     });
-  });
-  results.sort((a, b) => b['score'] - a['score']);
+    batches.map((batch) => {
+      batch.map((result) => {
+        if (!(result['id'] in index)) {
+          results.push(result);
+          index[result['id']] = true;
+        }
+      });
+    });
+    results.sort((a, b) => b['score'] - a['score']);
+  } catch (e) {
+    console.log(e);
+  }
   return results;
 }
 
