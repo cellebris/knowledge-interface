@@ -1,0 +1,21 @@
+title: "Login to make updates ..."
+subtitle: ""
+tagline: ""
+
+buttons:
+  - name: continue
+    label: Continue
+    redirect: /profile/start
+
+system: true
+fields:
+  - type: ShortText
+    name: email
+    label: "Member Email"
+    required: true
+    validator: validateEmail
+
+  - type: Password
+    name: password
+    label: "Member Password"
+    required: true
