@@ -1,0 +1,8 @@
+metadata:
+  title: 'Signup for Personalized Recommendations'
+  header: false
+  footer: false
+
+components:
+  - forms/profile/signup
+  - site_link
