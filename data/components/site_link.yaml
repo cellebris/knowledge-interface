@@ -1,0 +1,11 @@
+astroType: Media
+
+title: ''
+subtitle: ''
+
+lightSrc: '/_image/logo-light.svg'
+darkSrc: '/_image/logo-dark.svg'
+width: 300
+
+href: /
+target: '_blank'
