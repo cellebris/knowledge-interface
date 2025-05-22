@@ -1,12 +1,13 @@
 ---
 import type { FormLabel as Props } from '~/types';
+import { twMerge } from 'tailwind-merge';
 
-const { name, label = undefined, required = false } = Astro.props;
+const { name, label = undefined, required = false, className = '' } = Astro.props;
 ---
 
 {
   label && (
-    <label for={name} class="block text-sm font-medium">
+    <label for={name} class={twMerge('pt-5 pb-2 block text-med font-medium', className)}>
       {required ? <b>{label}*</b> : label}
     </label>
   )
