@@ -1,0 +1,66 @@
+---
+import type { Tabs as Props } from '~/types';
+
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Headline from '~/components/ui/Headline.astro';
+import TabsJS from '~/components/widgets/react/Tabs.jsx';
+import { generate } from '~/utils/generator';
+
+const { url } = Astro;
+const {
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  tagline = await Astro.slots.render('tagline'),
+
+  orientation = 'horizontal',
+  tabs = [],
+  value = undefined,
+
+  id,
+  isDark = false,
+  classes = {},
+  bg = await Astro.slots.render('bg'),
+} = Astro.props;
+
+let activeTab = value;
+
+if (id) {
+  const tabParam = url.searchParams.get(id) || null;
+  if (tabParam) {
+    activeTab = tabParam;
+  }
+}
+---
+
+<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-7xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
+  <div class="max-w-7xl mx-auto p-6">
+    <Headline
+      title={title}
+      subtitle={subtitle}
+      tagline={tagline}
+      classes={{
+        container: 'mb-0 md:mb-0',
+        title: 'text-4xl md:text-4xl font-bold tracking-tighter mb-4 font-heading',
+        subtitle: 'text-xl text-muted dark:text-slate-400',
+      }}
+    />
+    <TabsJS orientation={orientation} name={`${id}-tabs`} tabs={tabs} value={`${id}-tabs-${activeTab}`} client:load />
+    <div id={`${id}-tabs-content-container`}>
+      {
+        tabs.map((tab) => (
+          <div
+            id={`${id}-tabs-${tab.name}-content`}
+            data-name={`${id}-tabs-${tab.name}`}
+            class={`${id}-tabs-content hidden`}
+          >
+            <div id={`${id}-tabs-${tab.name}-components`} class="content-container">
+              {generate('components', tab.components).map((component) => {
+                return <component.tag {...component.props} />;
+              })}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</WidgetWrapper>
