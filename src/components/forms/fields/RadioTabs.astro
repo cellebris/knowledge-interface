@@ -1,0 +1,43 @@
+---
+import type { RadiosField as Props } from '~/types';
+import { twMerge } from 'tailwind-merge';
+import FormLabel from '~/components/forms/FormLabel.astro';
+import FormError from '~/components/forms/FormError.astro';
+import RadioTabsJS from '~/components/forms/fields/react/RadioTabs.jsx';
+
+const {
+  name,
+  label = undefined,
+  instruction = undefined,
+  options = [],
+  required = false,
+  error = undefined,
+  value = '',
+} = Astro.props;
+
+let defaultValue = value;
+if (defaultValue == '') {
+  defaultValue = options[0].name;
+}
+---
+
+<div class="mb-6">
+  <div class="mb-6">
+    <fieldset
+      name={name}
+      id={name}
+      class={twMerge(
+        'py-3 px-4 block w-full text-md rounded-lg bg-white dark:bg-slate-900',
+        error
+          ? 'shadow appearance-none border border-red-500 rounded leading-tight focus:outline-none focus:shadow-outline'
+          : ''
+      )}
+    >
+      <div class="mb-5 pb-4 border-b-2">
+        <FormLabel name={name} label={label} required={required} />
+      </div>
+      <RadioTabsJS name={name} instruction={instruction} options={options} value={defaultValue} client:load />
+      <FormError error={error} />
+    </fieldset>
+  </div>
+</div>
