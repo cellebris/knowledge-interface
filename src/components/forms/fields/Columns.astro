@@ -1,0 +1,48 @@
+---
+import type { ColumnsField as Props } from '~/types';
+import { twMerge } from 'tailwind-merge';
+import FormLabel from '~/components/forms/FormLabel.astro';
+import { getFormField } from '~/utils/generator';
+
+const {
+  formName,
+  name,
+  label = undefined,
+  columns = [],
+  topClass = '',
+  columnClass = '',
+  errors = {},
+  values = {},
+} = Astro.props;
+---
+
+<div class="mb-6">
+  <FormLabel name={name} label={label} className="text-xl text-center border-b-2" />
+  <div class={twMerge('flex', topClass)}>
+    {
+      columns.map((column) => (
+        <div class={twMerge('flex-col w-full m-5 p-5', columnClass)}>
+          {column.fields.map((item) => {
+            const component = getFormField(formName, item);
+
+            if (!component.tag) {
+              console.error(`Error: Component for field type "${item.type}" is not defined.`);
+              return <p class="text-red-500">Error: Unsupported field type: {item.type}</p>;
+            }
+            return (
+              <component.tag
+                formName={formName}
+                name={component.name}
+                error={errors[item.name]}
+                value={values[item.name]}
+                errors={errors}
+                values={values}
+                {...component.props}
+              />
+            );
+          })}
+        </div>
+      ))
+    }
+  </div>
+</div>
