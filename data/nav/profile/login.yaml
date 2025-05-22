@@ -1,0 +1,8 @@
+metadata:
+  title: 'Login for Personalized Recommendations'
+  header: false
+  footer: false
+
+components:
+  - forms/profile/login
+  - site_link
