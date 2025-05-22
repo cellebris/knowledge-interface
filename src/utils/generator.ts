@@ -1,8 +1,8 @@
-import type { LoaderConfig as Component, CallToAction, FormItem } from '~/types';
+import type { LoaderConfig as Component, CallToAction, FormItem, FormColumnsItem } from '~/types';
 import type { MenuLink } from '~/components/widgets/Header.astro';
 import type { Link, Links } from '~/components/widgets/Footer.astro';
 import { supportedTypes, supportedComponents } from '~/components';
-import { getVar, getObject, checkForms } from '~/utils/loader';
+import { getVar, getObject, checkInteractive } from '~/utils/loader';
 import { routes } from '~/utils/router';
 
 export function getHeaderMenu(): Array<MenuLink> {
@@ -155,7 +155,7 @@ export function generateLinks(): Array<string> {
 export function generateStaticLinks(): Array<string> {
   const links: Array<string> = [];
   generateLinks().map((path) => {
-    if (!checkForms(path)) {
+    if (!checkInteractive(path)) {
       links.push(path);
     }
   });
@@ -171,26 +171,24 @@ export async function generateSite(): Promise<Record<string, unknown>> {
   return components;
 }
 
-export function getFormField(formName: string, item: FormItem): Component {
-  const name: string = `${formName}-${item.name}`;
+export function getFormField(formName: string, item: FormItem | FormColumnsItem): Component {
   const props: Record<string, unknown> = {};
 
   for (const property in item) {
     if (Object.prototype.hasOwnProperty.call(item, property)) {
       if (property == 'name') {
-        props[property] = name;
+        props[property] = item.name;
       } else if (property != 'type') {
         props[property] = item[property];
       }
     }
   }
   const component: Component = {
-    name: name,
+    name: item.name,
     type: 'field',
     tag: supportedTypes[item.type], // Ensure this resolves correctly
     props: props,
   };
-
   if (!component.tag) {
     console.error(`Unsupported field type: ${item.type}`);
   }
