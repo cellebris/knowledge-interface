@@ -1,11 +1,14 @@
 import type { APIContext, MiddlewareNext } from 'astro';
-import type { FormItem } from '~/types';
+import type { Session, User } from 'better-auth/types';
+
+import { auth } from '~/auth';
 
 import { sequence } from 'astro:middleware';
-import { setVar, getObject, load, loadFootNote } from '~/utils/loader';
+import { setVar, addVars, getObject, load, loadFootNote, checkInteractive } from '~/utils/loader';
 import { checkRedirect, checkRewrite } from '~/utils/router';
-import { getSession } from '~/utils/session';
-import { formProcessor } from '~/utils/forms';
+import { validateFields, executeFormCallback, sendFormValues } from '~/utils/forms';
+import { loadProfileValues, saveProfileValues } from '~/utils/profiles';
+import { saveSubmissionValues } from '~/utils/submissions';
 
 async function loadComponents(_context: APIContext, next: MiddlewareNext) {
   loadFootNote();
@@ -24,6 +27,12 @@ async function loadComponents(_context: APIContext, next: MiddlewareNext) {
   ]) {
     await load(type);
   }
+
+  const validators = await import(/* @vite-ignore */ '~/lib/forms/validators');
+  if (validators) {
+    addVars('validators', validators);
+  }
+
   return await next();
 }
 
@@ -39,59 +48,101 @@ async function routeRequest(context: APIContext, next: MiddlewareNext) {
   return await next();
 }
 
+async function setSession(context: APIContext, next: MiddlewareNext) {
+  const accountInfo = await auth.api.getSession({
+    headers: context.request.headers,
+  });
+
+  if (accountInfo) {
+    context.locals.user = accountInfo.user as User;
+    context.locals.session = accountInfo.session as Session;
+  } else {
+    context.locals.user = null;
+    context.locals.session = null;
+
+    const path = context.url.pathname.replace(/^\//, '').replace(/\/$/, '');
+    const page = getObject('data/nav')[path];
+    let anonymous = true;
+
+    if (page) {
+      anonymous =
+        Object.prototype.hasOwnProperty.call(page, 'metadata') &&
+        Object.prototype.hasOwnProperty.call(page['metadata'], 'anonymous')
+          ? page['metadata']['anonymous']
+          : false;
+
+      if (path != 'profile/session' && checkInteractive(path) && !anonymous) {
+        return context.redirect(`/profile/session?continue=/${path}`);
+      }
+    }
+  }
+  setVar('user', context.locals.user);
+  setVar('session', context.locals.session);
+
+  return await next();
+}
+
 async function handleForms(context: APIContext, next: MiddlewareNext) {
+  const currentPath = context.url.pathname.replace(/^\//, '').replace(/\/$/, '');
   let formName = '';
 
-  if (context.request.method === 'POST') {
-    const sessionId = getSession(context);
+  if (!currentPath.startsWith('api') && context.request.method === 'POST') {
     try {
-      const js = getObject('js');
-      const forms = getObject('forms');
+      const user = context.locals.user;
+      const session = context.locals.session;
+      const forms = getObject('data/forms');
       const formData = await context.request.formData();
-      const formValues = {};
-      const formErrors = {};
+      const buttonName = formData.get('submit') as string;
 
       formName = formData.get('form-name') as string;
 
       const form = forms[formName];
+      const errorParam = context.url.searchParams.get(`${formName.replace(/\//, '-')}-error`) || null;
+      let redirect = null;
 
-      for (const field of Array.from(formData.entries())) {
-        const formPrefix = formName + '-';
-        let fieldName = '';
-
-        if (field[0].startsWith(formPrefix)) {
-          fieldName = field[0].slice(formPrefix.length);
-        } else {
-          fieldName = field[0];
-        }
-        if (fieldName in formValues) {
-          if (!Array.isArray(formValues[fieldName])) {
-            formValues[fieldName] = [formValues[fieldName]];
-          }
-          formValues[fieldName].push(field[1]);
-        } else {
-          formValues[fieldName] = field[1];
-        }
-      }
       if (form) {
-        form.fields.map((item: FormItem) => {
-          if (item['validator'] != undefined) {
-            try {
-              js[item['validator']](formValues[item.name], formValues);
-            } catch (error) {
-              formErrors[item.name] = error;
+        const formValues = form.profile ? await loadProfileValues(session, formName) : {};
+        const formErrors = {};
+
+        for (const field of Array.from(formData.entries())) {
+          formValues[field[0]] = field[1];
+        }
+
+        for (const buttonItem of form.buttons) {
+          if (buttonItem.name == buttonName) {
+            const urlRedirect = context.url.searchParams.get(buttonItem.name) || null;
+            redirect = urlRedirect ? urlRedirect : buttonItem.redirect;
+            break;
+          }
+        }
+        if (formValues['bot-field'] == '') {
+          const path = formValues['origin-path'].replace(/^\//, '').replace(/\/$/, '');
+
+          delete formValues['form-name'];
+          delete formValues['origin-path'];
+          delete formValues['bot-field'];
+
+          validateFields(path, formErrors, formValues, form.fields);
+          setVar(`${formName}_errors`, formErrors);
+          setVar(`${formName}_values`, formValues);
+
+          if (!errorParam && Object.keys(formErrors).length == 0) {
+            if (form.system) {
+              await executeFormCallback(session, formName, form, formValues);
+            } else if (form.profile) {
+              await saveProfileValues(session, path, formName, formValues);
+            } else {
+              await saveSubmissionValues(session, path, formName, formValues);
+            }
+
+            if (user) {
+              await sendFormValues(user, path, formName, form, formValues);
+            }
+
+            if (redirect != null) {
+              return context.redirect(redirect);
             }
           }
-        });
-      }
-      setVar(`${formName}_errors`, formErrors);
-      setVar(`${formName}_values`, formValues);
-
-      if (Object.keys(formErrors).length == 0) {
-        await formProcessor(sessionId, formName, formValues);
-
-        if (form && form.redirect) {
-          return context.redirect(`/${form.redirect.replace(/^\//, '')}`);
         }
       }
     } catch (error) {
@@ -101,4 +152,4 @@ async function handleForms(context: APIContext, next: MiddlewareNext) {
   return await next();
 }
 
-export const onRequest = sequence(loadComponents, routeRequest, handleForms);
+export const onRequest = sequence(loadComponents, routeRequest, setSession, handleForms);
