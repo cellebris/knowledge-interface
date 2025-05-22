@@ -1,5 +1,6 @@
 metadata:
   title: 'Contact Us'
+  anonymous: true
 
 components:
   - forms/contact
