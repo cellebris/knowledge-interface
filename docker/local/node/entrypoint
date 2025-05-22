@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+if [ -z "${POSTGRES_USER}" ]; then
+    export POSTGRES_USER="postgres"
+fi
+export DATABASE_URL="postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
+
+npx prisma generate
+npx prisma migrate dev --name=docker
+npm run start "$@"
