@@ -1,0 +1,18 @@
+astroType: Tabs
+
+title: ''
+subtitle: ''
+tagline: ''
+
+id: session-tabs
+value: new
+tabs:
+    - name: current
+      title: Current Member
+      components:
+         - forms/profile/login
+
+    - name: new
+      title: New Member
+      components:
+         - forms/profile/signup
