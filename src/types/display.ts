@@ -71,7 +71,7 @@ export interface CallToAction extends Omit<HTMLAttributes<'a'>, 'slot'> {
   text?: string;
   icon?: string;
   classes?: Record<string, string>;
-  type?: 'button' | 'submit' | 'reset';
+  type?: 'button' | 'submit' | 'reset' | 'link';
   value?: string;
 }
 
@@ -92,6 +92,15 @@ export interface Features extends Omit<Headline, 'classes'>, Widget {
   isReversed?: boolean;
   isBeforeContent?: boolean;
   isAfterContent?: boolean;
+}
+
+export interface Media extends Omit<Headline, 'classes'>, Widget {
+  lightSrc: string;
+  darkSrc: string;
+  href?: string;
+  target?: string;
+  width: number;
+  height: number;
 }
 
 export interface Content extends Omit<Headline, 'classes'>, Widget {
@@ -133,4 +142,18 @@ export interface Stat {
 
 export interface Stats extends Omit<Headline, 'classes'>, Widget {
   stats?: Array<Stat>;
+}
+
+export interface Tab {
+  name: string;
+  title: string;
+  icon?: string;
+  components: Array<string>;
+  content?: Array<string>;
+}
+
+export interface Tabs extends Omit<Headline, 'classes'>, Widget {
+  orientation?: string;
+  tabs: Array<Tab>;
+  value: string;
 }
