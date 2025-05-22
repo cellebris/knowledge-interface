@@ -11,7 +11,7 @@ export function getRootDir(): string {
   return rootDir;
 }
 
-export function getSrcDir(): string {
+export function getSourceDir(): string {
   const srcDir = getRootDir() + 'src' + path.sep;
   return srcDir;
 }
@@ -24,6 +24,15 @@ export function getDataDir(): string {
 export function getMenuDir(): string {
   const menuDir = getDataDir() + 'menus' + path.sep;
   return menuDir;
+}
+
+export function get(instance, property, defaultValue = null) {
+  try {
+    return instance[property] || defaultValue;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return defaultValue;
+  }
 }
 
 export function checkVar(name: string): boolean {
@@ -104,9 +113,6 @@ export async function load(type: string): Promise<void> {
     const ext = path.extname(filePath);
     if (ext == '.yml' || ext == '.yaml') {
       cards[name] = loadYaml(filePath);
-    } else if (ext == '.js') {
-      const module = await import(/* @vite-ignore */ filePath);
-      addVars('js', module);
     }
   }
   setVar(type, cards);
@@ -116,21 +122,21 @@ export function loadFootNote(): void {
   setVar('footnote', loadText(getDataDir() + 'footnote.txt'));
 }
 
-function checkFormData(data: object) {
+function checkInteractiveData(data: object) {
   for (const property in data) {
     if (Object.prototype.hasOwnProperty.call(data, property)) {
       if (Array.isArray(data[property])) {
         for (const value of data[property]) {
-          if (typeof value == 'string' && value.startsWith('forms/')) {
+          if ((typeof value == 'string' && value.startsWith('forms/')) || value.startsWith('profile/')) {
             return true;
           }
         }
       } else if (typeof data[property] == 'object') {
-        if (checkFormData(data[property])) {
+        if (checkInteractiveData(data[property])) {
           return true;
         }
       } else if (typeof data[property] == 'string') {
-        if (data[property].startsWith('forms/')) {
+        if (data[property].startsWith('forms/') || data[property].startsWith('profile/')) {
           return true;
         }
       }
@@ -139,9 +145,17 @@ function checkFormData(data: object) {
   return false;
 }
 
-export function checkForms(page: string): boolean {
+export function checkInteractive(pageName: string): boolean {
+  pageName = pageName.replace(/^\//, '').replace(/\/$/, '');
   try {
-    return checkFormData(getObject('data/nav')[page]);
+    const page = getObject('data/nav')[pageName];
+    if (
+      Object.prototype.hasOwnProperty.call(page, 'metadata') &&
+      Object.prototype.hasOwnProperty.call(page['metadata'], 'interactive')
+    ) {
+      return page['metadata']['interactive'];
+    }
+    return checkInteractiveData(page);
   } catch (error) {
     // Do nothing
     console.log(error.message);
