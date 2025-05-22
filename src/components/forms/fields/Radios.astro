@@ -1,0 +1,52 @@
+---
+import type { RadiosField as Props } from '~/types';
+import { twMerge } from 'tailwind-merge';
+import FormLabel from '~/components/forms/FormLabel.astro';
+import FormError from '~/components/forms/FormError.astro';
+
+const { name, label = undefined, options = [], required = false, error = undefined, value = undefined } = Astro.props;
+---
+
+<div class="mb-6">
+  <FormLabel name={name} label={label} required={required} />
+  <fieldset
+    name={name}
+    id={name}
+    class={twMerge(
+      'py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900',
+      error
+        ? 'shadow appearance-none border border-red-500 rounded leading-tight focus:outline-none focus:shadow-outline'
+        : ''
+    )}
+  >
+    {
+      options.map(
+        ({ name: option_name, title = '', label = '' }) =>
+          name && (
+            <div class="my-5 py-3 px-4 flex w-full text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900">
+              <div class="flex-col px-3">
+                <input
+                  type="radio"
+                  id={option_name}
+                  name={name}
+                  value={option_name}
+                  {...((Array.isArray(value) && value.includes(option_name)) || (value && value == option_name)
+                    ? { checked: 'true' }
+                    : {})}
+                />
+              </div>
+              <div class="flex-col px-3">
+                {title && <div class="text-xl">{title}</div>}
+                {label && (
+                  <div class="my-5 py-3 px-4 flex w-full text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900">
+                    {label}
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+      )
+    }
+  </fieldset>
+  <FormError error={error} />
+</div>
