@@ -2,6 +2,7 @@
 import type { Form as Props } from '~/types';
 import { getVar, getObject } from '~/utils/loader';
 import { getFormField } from '~/utils/generator';
+import { loadProfileValues } from '~/utils/profiles';
 import Headline from '~/components/ui/Headline.astro';
 import Button from '~/components/ui/Button.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
@@ -12,10 +13,12 @@ const {
   title = await Astro.slots.render('title'),
   subtitle = await Astro.slots.render('subtitle'),
   tagline = await Astro.slots.render('tagline'),
+  redirect = undefined,
   note = undefined,
+  profile = false,
   fields = [],
+  buttons = [],
   disclaimer = undefined,
-  buttonText = undefined,
 
   id,
   isDark = false,
@@ -23,16 +26,29 @@ const {
   bg = await Astro.slots.render('bg'),
 } = Astro.props;
 
-const error = getVar(`${name}_error`);
+const session = Astro.locals.session;
+const form = getObject('data/forms')[name];
+
 const errors = getObject(`${name}_errors`);
-const values = getObject(`${name}_values`);
+let error = getVar(`${name}_error`);
+let values = getObject(`${name}_values`);
+if (session && profile) {
+  const dbValues = await loadProfileValues(session, name);
+  if (Object.keys(dbValues).length != 0) {
+    values = dbValues;
+  }
+}
+const errorParam = Astro.url.searchParams.get(`${name.replace(/\//, '-')}-error`) || null;
+if (errorParam) {
+  error = Error(errorParam);
+}
 ---
 
 <WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-7xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
   <Headline title={title} subtitle={subtitle} tagline={tagline} />
 
   <div
-    class="flex flex-col max-w-xl mx-auto rounded-lg backdrop-blur border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 shadow p-4 sm:p-6 lg:p-8 w-full"
+    class="flex flex-col mx-auto rounded-lg backdrop-blur border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900 shadow p-4 sm:p-6 lg:p-8 w-full"
   >
     {
       error && (
@@ -41,13 +57,13 @@ const values = getObject(`${name}_values`);
         </div>
       )
     }
-    <form method="POST" id={name} name={name}>
+    <form method="POST" action={redirect} id={name.replace(/\//, '-')} name={name.replace(/\//, '-')}>
       <input type="hidden" name="form-name" value={name} />
       <input type="hidden" name="origin-path" value={url.pathname} />
 
       <p class="hidden">
         <label>
-          Don’t fill this out if you’re human: <input name="bot-field" />
+          Verify you’re human: <input name="bot-field" />
         </label>
       </p>
       {
@@ -60,43 +76,94 @@ const values = getObject(`${name}_values`);
             return <p class="text-red-500">Error: Unsupported field type: {item.type}</p>;
           }
 
-          return <component.tag error={errors[item.name]} value={values[item.name]} {...component.props} />;
+          return (
+            <component.tag
+              formName={name}
+              name={component.name}
+              error={errors[item.name]}
+              value={values[item.name]}
+              errors={errors}
+              values={values}
+              {...component.props}
+            />
+          );
         })
       }
       {
         disclaimer && (
-          <div class="mt-3 flex items-start">
-            <div class="flex mt-0.5">
-              <input
-                id="disclaimer"
-                name="disclaimer"
-                type="checkbox"
-                class="cursor-pointer block w-full mt-1 py-3 px-4 text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900"
-                required
-              />
-            </div>
-            <div class="ml-3">
-              <label for="disclaimer" class="cursor-pointer select-none text-sm text-gray-600 dark:text-gray-400">
-                {disclaimer}*
-              </label>
+          <div class="mt-5 flex items-center">
+            <div class="flex mx-auto">
+              <div class="flex-col p-5">
+                <input
+                  id="disclaimer"
+                  name="disclaimer"
+                  type="checkbox"
+                  class="h-10 w-10 mt-1 py-3 px-4 cursor-pointer text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900"
+                  required
+                />
+              </div>
+              <div class="flex-col text-wrap align-middle">
+                <div class="mx-5 mt-4 px-5 text-lg" set:html={disclaimer} />
+              </div>
             </div>
           </div>
         )
       }
 
-      <div class="mt-10 grid">
-        <Button variant="primary" type="submit" value="primary">
-          {buttonText ? buttonText : 'Submit'}
-        </Button>
+      <div class="mt-20 py-5 border-t-2 flex justify-center">
+        {
+          buttons.map((button) => (
+            <Button
+              variant={button.variant ? button.variant : 'primary'}
+              type={button.type ? button.type : 'submit'}
+              value={button.name}
+              target={button.target ? button.target : ''}
+              href={button.url ? button.url : ''}
+              class="m-3 flex-col min-w-48"
+            >
+              {button.label ? button.label : 'Submit'}
+            </Button>
+          ))
+        }
       </div>
 
       {
         note && (
-          <div class="mt-3 text-center">
+          <div class="mt-5 text-center">
             <p class="text-sm text-gray-600 dark:text-gray-400">{note}</p>
           </div>
         )
       }
     </form>
   </div>
+
+  <script>
+    import { signUp, signIn } from '~/lib/auth-client';
+    import { initializeForm } from '~/lib/form-client';
+
+    declare global {
+      interface Window {
+        formInitializer(formName: string, form: object, values: object);
+        signUp(email: string, fullName: string, password: string);
+        signIn(email: string, password: string);
+      }
+    }
+    window.formInitializer = function (formName, form, values) {
+      return initializeForm(formName, form, values);
+    };
+    window.signUp = async function (email, fullName, password) {
+      return await signUp(email, fullName, password);
+    };
+    window.signIn = async function (email, password) {
+      return await signIn(email, password);
+    };
+  </script>
+
+  <script define:vars={{ formName: name, form, values }}>
+    document.addEventListener('DOMContentLoaded', () => {
+      const formInitializer = window.formInitializer(formName, form, values);
+      document.addEventListener('astro:page-load', formInitializer);
+      document.addEventListener('astro:after-swap', formInitializer);
+    });
+  </script>
 </WidgetWrapper>
