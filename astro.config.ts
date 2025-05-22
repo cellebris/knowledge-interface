@@ -6,6 +6,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
 import mdx from '@astrojs/mdx';
+import react from '@astrojs/react';
 import node from '@astrojs/node';
 
 import icon from 'astro-icon';
@@ -18,7 +19,28 @@ import { responsiveTablesRehypePlugin, lazyImagesRehypePlugin } from './src/util
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  output: 'static',
+  prefetch: false,
+
+  server: {
+    allowedHosts: [],
+    headers: {
+      'Content-Security-Policy':
+        "default-src data: * 'localhost'; " +
+        "script-src data: * 'unsafe-inline' 'localhost'; " +
+        "style-src * 'unsafe-inline' 'localhost'; " +
+        "media-src data: * 'localhost'; " +
+        'frame-src data: *; ' +
+        'connect-src data: *; ' +
+        "img-src * 'localhost'; ",
+    },
+  },
+
   integrations: [
+    react({
+      include: ['**/react/*'],
+      experimentalReactChildren: true,
+    }),
     tailwind({
       applyBaseStyles: false,
     }),
