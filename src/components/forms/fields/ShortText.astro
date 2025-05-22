@@ -11,7 +11,7 @@ const {
   autocomplete = 'on',
   required = false,
   error = undefined,
-  value = undefined,
+  value = '',
 } = Astro.props;
 ---
 
@@ -33,4 +33,10 @@ const {
     {...required ? { required: 'true' } : {}}
   />
   <FormError error={error} />
+
+  <script is:inline define:vars={{ id: name, value: value }}>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById(id).value = value;
+    });
+  </script>
 </div>
