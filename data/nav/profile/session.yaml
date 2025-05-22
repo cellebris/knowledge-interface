@@ -1,0 +1,8 @@
+metadata:
+  title: 'Your gateway for Personalized Recommendations'
+  header: false
+  footer: false
+
+components:
+  - profile/session_tabs
+  - site_link
