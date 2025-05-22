@@ -1,0 +1,50 @@
+title: "Create an Account to get started ..."
+subtitle: ""
+tagline: ""
+
+disclaimer: 'By submitting this form, you acknowledge and agree to the collection of your personal information in accordance with our <a class="font-medium text-blue-600 dark:text-blue-500 hover:underline" target="_blank" href="/privacy">privacy policy</a>.  <b>In short, we do not sell or share your information, and all information given feeds personalized recommendations.</b>'
+
+buttons:
+  - name: continue
+    label: Continue
+    redirect: /profile/start
+
+  - name: contact
+    type: link
+    variant: secondary
+    label: Contact Us
+    url: /contact
+
+system: true
+fields:
+  - type: ShortText
+    name: email
+    label: "Email for Communication"
+    required: true
+    validator: validateEmail
+
+  - type: ShortText
+    name: full-name
+    label: "Your Full Name"
+    required: true
+    validator: validateName
+
+  - type: FormColumns
+    columnClass: "p-0"
+    columns:
+      - fields:
+        - type: Password
+          name: password
+          label: "Password (8 to 32 numbers, uppercase, and lowercase letters)"
+          required: true
+          minLength: 8
+          maxLength: 32
+          pattern: "[0-9a-zA-Z]{8,32}"
+          validator: validatePassword
+
+      - fields:
+        - type: Password
+          name: confirm-password
+          label: "Confirm Password"
+          required: true
+          validator: validateConfirmPassword
